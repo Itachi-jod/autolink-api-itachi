@@ -6,12 +6,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API LIST
+// API LIST (UPDATED YOUTUBE API)
 const APIS = {
   tiktok: "https://tiktok-downloader-ita.vercel.app/download?url=",
   instagram: "https://instagram-dl-iota.vercel.app/download?url=",
   facebook: "https://itachi-fb-video-dl.vercel.app/download?url=",
-  youtube: "https://dens-videojs.vercel.app/api/video?query="
+  youtube: "https://ita-social-dl.vercel.app/api/download?url="
 };
 
 // Detect platform
@@ -23,11 +23,12 @@ function detectPlatform(url) {
   return null;
 }
 
+// ROOT ENDPOINT
 app.get("/", (req, res) => {
   res.send("AutoLink API by Itachi is running!");
 });
 
-// Auto downloader
+// AUTO DOWNLOADER ENDPOINT
 app.get("/download", async (req, res) => {
   const url = req.query.url;
 
