@@ -9,12 +9,13 @@ app.use(express.json());
 // Always pretty-print JSON responses
 app.set("json spaces", 2);
 
-// API LIST
+// API LIST (Pinterest added)
 const APIS = {
   tiktok: "https://tiktok-downloader-ita.vercel.app/api/download?url=",
   instagram: "https://instagram-dl-iota.vercel.app/download?url=",
   facebook: "https://itachi-fb-video-dl.vercel.app/download?url=",
-  youtube: "https://ita-social-dl.vercel.app/api/download?url="
+  youtube: "https://ita-social-dl.vercel.app/api/download?url=",
+  pinterest: "https://pinterest-dl-itachi.vercel.app/api/download?url="
 };
 
 // Detect platform
@@ -23,6 +24,7 @@ function detectPlatform(url) {
   if (/instagram\.com|ig\.me/.test(url)) return "instagram";
   if (/facebook\.com|fb\.watch/.test(url)) return "facebook";
   if (/youtube\.com|youtu\.be/.test(url)) return "youtube";
+  if (/pinterest\.com|pin\.it/.test(url)) return "pinterest"; // NEW
   return null;
 }
 
