@@ -11,7 +11,7 @@ app.set("json spaces", 2);
 
 // API LIST
 const APIS = {
-  tiktok: "https://tiktok-downloader-ita.vercel.app/download?url=",
+  tiktok: "https://tiktok-downloader-ita.vercel.app/api/download?url=",
   instagram: "https://instagram-dl-iota.vercel.app/download?url=",
   facebook: "https://itachi-fb-video-dl.vercel.app/download?url=",
   youtube: "https://ita-social-dl.vercel.app/api/download?url="
