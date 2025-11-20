@@ -6,7 +6,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API LIST (UPDATED YOUTUBE API)
+// Always pretty-print JSON responses
+app.set("json spaces", 2);
+
+// API LIST
 const APIS = {
   tiktok: "https://tiktok-downloader-ita.vercel.app/download?url=",
   instagram: "https://instagram-dl-iota.vercel.app/download?url=",
@@ -35,7 +38,7 @@ app.get("/download", async (req, res) => {
   if (!url) {
     return res.status(400).json({
       success: false,
-      message: "Missing ?url=",
+      message: "Missing ?url="
     });
   }
 
@@ -43,7 +46,7 @@ app.get("/download", async (req, res) => {
   if (!platform) {
     return res.status(400).json({
       success: false,
-      message: "Unsupported URL!",
+      message: "Unsupported URL!"
     });
   }
 
