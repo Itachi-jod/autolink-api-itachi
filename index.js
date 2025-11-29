@@ -12,8 +12,8 @@ app.set("json spaces", 2);
 // API LIST (Pinterest added)
 const APIS = {
   tiktok: "https://tiktok-downloader-ita.vercel.app/api/download?url=",
-  instagram: "https://instagram-dl-iota.vercel.app/download?url=",
-  facebook: "https://itachi-fb-video-dl.vercel.app/download?url=",
+  instagram: "https://instagram-dl-iota.vercel.app/Instagram?url=",
+  facebook: "https://itachi-fb-video-dl.vercel.app/api/facebook?url=",
   youtube: "https://ita-social-dl.vercel.app/api/download?url=",
   pinterest: "https://pinterest-dl-itachi.vercel.app/api/download?url="
 };
