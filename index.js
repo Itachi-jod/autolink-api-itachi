@@ -5,7 +5,8 @@ module.exports = async (req, res) => {
 
   // Root path → API info
   if (req.url === '/' || req.url.startsWith('/?')) {
-    res.status(200).json({
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(JSON.stringify({
       success: true,
       author: "ItachiXD",
       message: "Unified Video Downloader API",
@@ -26,13 +27,13 @@ module.exports = async (req, res) => {
         "/api/download?url=https://www.instagram.com/p/ABCDEFG/",
         "/api/download?url=https://www.pinterest.com/pin/123456/"
       ]
-    });
+    }, null, 2));
     return;
   }
 
-  // /api/download endpoint
   if (!url) {
-    res.status(400).json({ success: false, error: "Missing url parameter" });
+    res.setHeader('Content-Type', 'application/json');
+    res.status(400).send(JSON.stringify({ success: false, error: "Missing url parameter" }, null, 2));
     return;
   }
 
@@ -42,6 +43,7 @@ module.exports = async (req, res) => {
     let platform = '';
     let downloadUrl = '';
 
+    // YouTube
     if (url.includes('youtube.com') || url.includes('youtu.be')) {
       platform = 'YouTube';
       const apiRes = await axios.get(`https://ita-social-dl.vercel.app/api/download?url=${encodeURIComponent(url)}`);
@@ -51,6 +53,7 @@ module.exports = async (req, res) => {
         downloadUrl = apiRes.data.data.data.links[2]?.download_url || apiRes.data.data.data.links[0]?.download_url;
       }
     } 
+    // Pinterest
     else if (url.includes('pin.it') || url.includes('pinterest.com/pin/')) {
       platform = 'Pinterest';
       const apiRes = await axios.get(`https://fbdl-minato.vercel.app/api/fbdl?url=${encodeURIComponent(url)}`);
@@ -59,6 +62,7 @@ module.exports = async (req, res) => {
         downloadUrl = apiRes.data.data.medias?.url || apiRes.data.data.data?.medias?.url;
       }
     } 
+    // Facebook
     else if (url.includes('facebook.com') || url.includes('fb.watch')) {
       platform = 'Facebook';
       const apiRes = await axios.get(`https://itachi-fb-video-dl.vercel.app/api/facebook?url=${encodeURIComponent(url)}`);
@@ -67,6 +71,7 @@ module.exports = async (req, res) => {
         downloadUrl = apiRes.data.hd || apiRes.data.sd;
       }
     }
+    // TikTok
     else if (url.includes('tiktok.com')) {
       platform = 'TikTok';
       const apiRes = await axios.get(`https://tiktok-downloader-ita.vercel.app/api/download?url=${encodeURIComponent(url)}`);
@@ -75,6 +80,7 @@ module.exports = async (req, res) => {
         downloadUrl = apiRes.data.data.medias[0]?.url;
       }
     } 
+    // Instagram
     else if (url.includes('instagram.com')) {
       platform = 'Instagram';
       const apiRes = await axios.get(`https://instagram-dl-iota.vercel.app/Instagram?url=${encodeURIComponent(url)}`);
@@ -84,27 +90,33 @@ module.exports = async (req, res) => {
       }
     } 
     else {
-      res.status(400).json({ success: false, error: "Unsupported platform" });
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).send(JSON.stringify({ success: false, error: "Unsupported platform" }, null, 2));
       return;
     }
 
     if (!downloadUrl) {
-      res.status(500).json({ success: false, error: "Download URL not found" });
+      res.setHeader('Content-Type', 'application/json');
+      res.status(500).send(JSON.stringify({ success: false, error: "Download URL not found" }, null, 2));
       return;
     }
 
-    res.status(200).json(JSON.parse(JSON.stringify({
+    // Successful response with pretty print
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(JSON.stringify({
       success: true,
       author: DEFAULT_AUTHOR,
       platform,
       download_url: downloadUrl
-    }, null, 2)));
+    }, null, 2));
 
   } catch (err) {
-    res.status(500).json(JSON.parse(JSON.stringify({
+    res.setHeader('Content-Type', 'application/json');
+    res.status(500).send(JSON.stringify({
       success: false,
       author: DEFAULT_AUTHOR,
       error: err.message
-    }, null, 2)));
+    }, null, 2));
   }
 };
+        
