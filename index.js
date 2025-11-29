@@ -58,7 +58,7 @@ module.exports = async (req, res) => {
       platform = 'Pinterest';
       const apiRes = await axios.get(`https://fbdl-minato.vercel.app/api/fbdl?url=${encodeURIComponent(url)}`);
       
-      if (apiRes.data.success) 
+      if (apiRes.data.success) {
         downloadUrl = apiRes.data.data.medias[0].url;
       }
     } 
