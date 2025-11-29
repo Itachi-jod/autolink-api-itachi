@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
 
       if (apiRes.data.success) {
         // 426p first, fallback to 640p
-        downloadUrl = apiRes.data.data.data.links[2]?.download_url || apiRes.data.data.data.links[0]?.download_url;
+        downloadUrl = apiRes.data.data.data.data.links[2]?.download_url || apiRes.data.data.data.data.links[0]?.download_url;
       }
     } 
     // Pinterest
