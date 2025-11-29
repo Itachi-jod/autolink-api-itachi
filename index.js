@@ -56,7 +56,7 @@ module.exports = async (req, res) => {
     // Pinterest
     else if (url.includes('pin.it') || url.includes('pinterest.com/pin/')) {
       platform = 'Pinterest';
-      const apiRes = await axios.get(`https://fbdl-minato.vercel.app/api/fbdl?url=${encodeURIComponent(url)}`);
+      const apiRes = await axios.get(`https://pinterest-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`);
       
       if (apiRes.data.success) {
         downloadUrl = apiRes.data.data.medias[0].url;
