@@ -1,103 +1,122 @@
-const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
+const axios = require('axios');
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+module.exports = async (req, res) => {
+  const url = req.query.url;
 
-// Pretty Printer
-function pretty(obj) {
-  return JSON.stringify(obj, null, 2);
-}
-
-// Detect platform
-function detectPlatform(url) {
-  if (url.includes("tiktok.com")) return "TikTok";
-  if (url.includes("instagram.com")) return "Instagram";
-  if (url.includes("facebook.com") || url.includes("fb.watch")) return "Facebook";
-  return "Unknown";
-}
-
-app.get("/api/download", async (req, res) => {
-  const videoUrl = req.query.url;
-
-  if (!videoUrl) {
-    return res.status(400).send(
-      pretty({
-        success: false,
-        author: "ItachiXD",
-        message: "Missing ?url="
-      })
-    );
+  // Root path → API info
+  if (req.url === '/' || req.url.startsWith('/?')) {
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(JSON.stringify({
+      success: true,
+      author: "ItachiXD",
+      message: "Unified Video Downloader API",
+      endpoints: {
+        download: "/api/download?url={VIDEO_URL}"
+      },
+      platforms: ["YouTube", "Facebook", "TikTok", "Instagram", "Pinterest"],
+      response_format: {
+        success: "boolean",
+        author: "string",
+        platform: "string",
+        download_url: "string"
+      },
+      usage_example: [
+        "/api/download?url=https://youtube.com/watch?v=C8mJ8943X80",
+        "/api/download?url=https://www.facebook.com/watch/?v=1393572814172251",
+        "/api/download?url=https://www.tiktok.com/@user/video/123456789",
+        "/api/download?url=https://www.instagram.com/p/ABCDEFG/",
+        "/api/download?url=https://www.pinterest.com/pin/123456/"
+      ]
+    }, null, 2));
+    return;
   }
+
+  if (!url) {
+    res.setHeader('Content-Type', 'application/json');
+    res.status(400).send(JSON.stringify({ success: false, error: "Missing url parameter" }, null, 2));
+    return;
+  }
+
+  const DEFAULT_AUTHOR = "ItachiXD";
 
   try {
-    const headers = {
-      "Content-Type": "application/json",
-      Accept: "application/json, text/plain, */*",
-      "User-Agent":
-        "Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36",
-      Origin: "https://downloady.vercel.app",
-      Referer: "https://downloady.vercel.app/",
-    };
+    let platform = '';
+    let downloadUrl = '';
 
-    // ⬇ Call the real backend
-    const apiRes = await axios.post(
-      "https://downloady.vercel.app/api/initiate-download",
-      { url: videoUrl },
-      { headers }
-    );
+    // YouTube
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      platform = 'YouTube';
+      const apiRes = await axios.get(`https://ita-social-dl.vercel.app/api/download?url=${encodeURIComponent(url)}`);
 
-    // ⬇ Extract single video URL
-    const data = apiRes.data;
+      if (apiRes.data.success) {
+        // 426p first, fallback to 640p
+        downloadUrl = apiRes.data.data.data.data.links[2]?.download_url || apiRes.data.data.data.data.links[0]?.download_url;
+      }
+    } 
+    // Pinterest
+    else if (url.includes('pin.it') || url.includes('pinterest.com/pin/')) {
+      platform = 'Pinterest';
+      const apiRes = await axios.get(`https://pinterest-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`);
+      
+      if (apiRes.data.success) {
+        downloadUrl = apiRes.data.data.medias[0].url;
+      }
+    } 
+    // Facebook
+    else if (url.includes('facebook.com') || url.includes('fb.watch')) {
+      platform = 'Facebook';
+      const apiRes = await axios.get(`https://itachi-fb-video-dl.vercel.app/api/facebook?url=${encodeURIComponent(url)}`);
 
-    let finalUrl =
-      data?.videoUrl ||
-      data?.download_url ||
-      data?.url ||
-      data?.links?.download ||
-      data?.links?.[0] ||
-      null;
+      if (apiRes.data.success) {
+        downloadUrl = apiRes.data.hd || apiRes.data.sd;
+      }
+    }
+    // TikTok
+    else if (url.includes('tiktok.com')) {
+      platform = 'TikTok';
+      const apiRes = await axios.get(`https://tiktok-downloader-ita.vercel.app/api/download?url=${encodeURIComponent(url)}`);
 
-    if (!finalUrl) {
-      return res.status(500).send(
-        pretty({
-          success: false,
-          author: "ItachiXD",
-          message: "Could not extract video URL",
-          raw: data
-        })
-      );
+      if (apiRes.data.success) {
+        downloadUrl = apiRes.data.data.medias[0]?.url;
+      }
+    } 
+    // Instagram
+    else if (url.includes('instagram.com')) {
+      platform = 'Instagram';
+      const apiRes = await axios.get(`https://instagram-dl-iota.vercel.app/Instagram?url=${encodeURIComponent(url)}`);
+
+      if (apiRes.data.success) {
+        downloadUrl = apiRes.data.data.videoUrl || apiRes.data.data.data?.videoUrl;
+      }
+    } 
+    else {
+      res.setHeader('Content-Type', 'application/json');
+      res.status(400).send(JSON.stringify({ success: false, error: "Unsupported platform" }, null, 2));
+      return;
     }
 
-    return res.send(
-      pretty({
-        success: true,
-        author: "ItachiXD",
-        platform: detectPlatform(videoUrl),
-        download_url: finalUrl
-      })
-    );
+    if (!downloadUrl) {
+      res.setHeader('Content-Type', 'application/json');
+      res.status(500).send(JSON.stringify({ success: false, error: "Download URL not found" }, null, 2));
+      return;
+    }
+
+    // Successful response with pretty print
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).send(JSON.stringify({
+      success: true,
+      author: DEFAULT_AUTHOR,
+      platform,
+      download_url: downloadUrl
+    }, null, 2));
+
   } catch (err) {
-    return res.status(500).send(
-      pretty({
-        success: false,
-        author: "ItachiXD",
-        error: err.response?.data || err.message
-      })
-    );
+    res.setHeader('Content-Type', 'application/json');
+    res.status(500).send(JSON.stringify({
+      success: false,
+      author: DEFAULT_AUTHOR,
+      error: err.message
+    }, null, 2));
   }
-});
-
-// Root endpoint
-app.get("/", (req, res) => {
-  res.send(
-    pretty({
-      author: "ItachiXD",
-      status: "Downloader API Running"
-    })
-  );
-});
-
-module.exports = app;
+};
+        
