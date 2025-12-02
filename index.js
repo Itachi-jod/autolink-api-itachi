@@ -13,7 +13,17 @@ module.exports = async (req, res) => {
       endpoints: {
         download: "/api/download?url={VIDEO_URL}"
       },
-      platforms: ["YouTube", "Facebook", "TikTok", "Instagram", "Pinterest"],
+      platforms: ["Youconst apiRes = await axios.get(`https://insta-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`);
+
+      if (apiRes.data.success) {
+        downloadUrl = apiRes.data.data.videoUrl || apiRes.data.data.data?.vconst apiRes = await axios.get(`https://fb-video-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`);
+
+      if (apiRes.data.success) {
+        downloadUrl = apiRes.data.hd || apiRes.data.sd;
+      }
+    }ideoUrl;
+      }
+    } Tube", "Facebook", "TikTok", "Instagram", "Pinterest"],
       response_format: {
         success: "boolean",
         author: "string",
@@ -65,12 +75,20 @@ module.exports = async (req, res) => {
     // Facebook
     else if (url.includes('facebook.com') || url.includes('fb.watch')) {
       platform = 'Facebook';
-      const apiRes = await axios.get(`https://itachi-fb-video-dl.vercel.app/api/facebook?url=${encodeURIComponent(url)}`);
+      const apiRes = await axios.get(
+  `https://fb-video-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`
+);
 
-      if (apiRes.data.success) {
-        downloadUrl = apiRes.data.hd || apiRes.data.sd;
-      }
-    }
+if (apiRes.data.success) {
+  const links = apiRes.data.data?.data?.links || [];
+
+  // Try to find HD first, fallback to SD
+  const hd = links.find(l => l.quality === "video_hd_0")?.link;
+  const sd = links.find(l => l.quality === "video_sd_0")?.link;
+
+  downloadUrl = hd || sd;
+}
+}
     // TikTok
     else if (url.includes('tiktok.com')) {
       platform = 'TikTok';
@@ -83,12 +101,12 @@ module.exports = async (req, res) => {
     // Instagram
     else if (url.includes('instagram.com')) {
       platform = 'Instagram';
-      const apiRes = await axios.get(`https://instagram-dl-iota.vercel.app/Instagram?url=${encodeURIComponent(url)}`);
+      const apiRes = await axios.get(`https://insta-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`);
 
-      if (apiRes.data.success) {
-        downloadUrl = apiRes.data.data.videoUrl || apiRes.data.data.data?.videoUrl;
-      }
-    } 
+if (apiRes.data.success) {
+  downloadUrl = apiRes.data.data?.data?.links?.[1]?.link;
+}
+}
     else {
       res.setHeader('Content-Type', 'application/json');
       res.status(400).send(JSON.stringify({ success: false, error: "Unsupported platform" }, null, 2));
