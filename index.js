@@ -60,16 +60,22 @@ module.exports = async (req, res) => {
       }
     } 
     // Facebook
-    else if (url.includes('facebook.com') || url.includes('fb.watch')) {
-      platform = 'Facebook';
-      const apiRes = await axios.get(`https://fb-video-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`);
-      if (apiRes.data.success) {
-        const links = apiRes.data.data?.data?.links || [];
-        const hd = links.find(l => l.quality === "video_hd_0")?.link;
-        const sd = links.find(l => l.quality === "video_sd_0")?.link;
-        downloadUrl = hd || sd;
-      }
-    } 
+    else if (url.includes("facebook.com") || url.includes("fb.watch")) {
+  platform = "Facebook";
+
+  const apiRes = await axios.get(
+    `https://fb-video-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`
+  );
+
+  if (apiRes.data.success) {
+    const sd = apiRes.data.sd || null;
+    const hd = apiRes.data.hd || null;
+
+    // Prefer HD if available
+    downloadUrl = hd || sd;
+  }
+}
+
     // TikTok
     else if (url.includes('tiktok.com')) {
       platform = 'TikTok';
