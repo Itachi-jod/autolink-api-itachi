@@ -86,12 +86,18 @@ module.exports = async (req, res) => {
     } 
     // Instagram
     else if (url.includes('instagram.com')) {
-      platform = 'Instagram';
-      const apiRes = await axios.get(`https://insta-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`);
-      if (apiRes.data.success) {
-        downloadUrl = apiRes.data.data?.data?.links?.[1]?.link;
-      }
-    } 
+  platform = 'Instagram';
+
+  const apiRes = await axios.get(
+    `https://insta-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`
+  );
+
+  if (apiRes.data.success) {
+    // NEW FORMAT → video URL is at: data.data.data.videoUrl
+    downloadUrl = apiRes.data.data?.data?.videoUrl;
+  }
+}
+
     else {
       res.setHeader('Content-Type', 'application/json');
       res.status(400).send(JSON.stringify({ success: false, error: "Unsupported platform" }, null, 2));
