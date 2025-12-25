@@ -56,7 +56,8 @@ module.exports = async (req, res) => {
       platform = 'Pinterest';
       const apiRes = await axios.get(`https://pinterest-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`);
       if (apiRes.data.success) {
-        downloadUrl = apiRes.data.data?.medias?.[0]?.url;
+        downloadUrl = apiRes.data.data?.data.videoUrl || apiRes.data.data?.data.imageUrl;
+        ;
       }
     } 
     // Facebook
