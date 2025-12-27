@@ -82,7 +82,7 @@ module.exports = async (req, res) => {
       platform = 'TikTok';
       const apiRes = await axios.get(`https://tiktok-downloader-ita.vercel.app/api/download?url=${encodeURIComponent(url)}`);
       if (apiRes.data.success) {
-        downloadUrl = apiRes.data.data?.medias?.[0]?.url;
+        downloadUrl = apiRes.data.download_url;
       }
     } 
     // Instagram
