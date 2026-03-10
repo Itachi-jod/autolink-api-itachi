@@ -68,7 +68,7 @@ module.exports = async (req, res) => {
     `https://fb-video-dl-itachi.vercel.app/api/fb?url=${encodeURIComponent(url)}`
   );
 
-  if (apiRes.data.success
+  if (apiRes.data.success) {
     const hd = apiRes.data.data.data.hd_link || null;
     const sd = apiRes.data.data.data.sd_link || null;
 
