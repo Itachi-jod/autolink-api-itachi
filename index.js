@@ -69,8 +69,8 @@ module.exports = async (req, res) => {
   );
 
   if (apiRes.data.success) {
-    const hd = apiRes.data.data.data.hd_link || null;
-    const sd = apiRes.data.data.data.sd_link || null;
+    const hd = apiRes.data.data.hd_link || null;
+    const sd = apiRes.data.data.sd_link || null;
 
     // Prefer HD if available
     downloadUrl = hd || sd;
