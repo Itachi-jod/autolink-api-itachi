@@ -65,12 +65,12 @@ module.exports = async (req, res) => {
   platform = "Facebook";
 
   const apiRes = await axios.get(
-    `https://fb-video-dl-itachi.vercel.app/api/download?url=${encodeURIComponent(url)}`
+    `https://fb-video-dl-itachi.vercel.app/api/fb?url=${encodeURIComponent(url)}`
   );
 
-  if (apiRes.data.success) {
-    const sd = apiRes.data.sd || null;
-    const hd = apiRes.data.hd || null;
+  if (apiRes.data.success
+    const hd = apiRes.data.data.data.hd_link || null;
+    const sd = apiRes.data.data.data.sd_link || null;
 
     // Prefer HD if available
     downloadUrl = hd || sd;
