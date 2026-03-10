@@ -69,13 +69,15 @@ module.exports = async (req, res) => {
   );
 
   if (apiRes.data.success) {
-    const hd = apiRes.data.data?.data?.hd_link || null;
-    const sd = apiRes.data.data?.data?.sd_link || null;
+    const videoData = apiRes.data.data?.data?.[0];
+
+    const hd = videoData?.hd_link || null;
+    const sd = videoData?.sd_link || null;
 
     // Prefer HD if available
     downloadUrl = hd || sd;
   }
-}
+    }
 
     // TikTok
     else if (url.includes('tiktok.com')) {
